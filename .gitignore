@@ -1,0 +1,19 @@
+# IDE and editor metadata
+.idea/
+.vscode/
+*.iml
+
+# Operating system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor swap and backup files
+*.swp
+*.swo
+*~
+
+# Temporary generated files
+*.tmp
+*.temp
+~$*
