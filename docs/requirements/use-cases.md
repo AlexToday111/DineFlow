@@ -1,6 +1,6 @@
 # Use Cases
 
-Status: **Not yet specified**.
+Status: **Existing diagram available; textual use-case specifications pending**.
 
 This document will describe actor interactions, conditions, and outcomes. The source contains an existing use-case diagram, but no complete textual use-case specification. The template below is intentionally unpopulated.
 
@@ -21,3 +21,9 @@ The image is preserved without modification. Its presence does not confirm detai
 | Main Flow | |
 | Alternative Flows | |
 | Postconditions | |
+
+## Related UML models
+
+The [class diagram](../architecture/class-diagram.md) describes the system structure. The planned [sequence diagram](../architecture/sequence-diagram.md) will illustrate interactions during booking, pre-ordering, and payment once its UML source is added.
+
+[Back to architecture and UML](../architecture/README.md)
