@@ -1,69 +1,96 @@
 # Development Approach and Methodology
 
-Status: **Planned approach**. The activities below describe intended work, not completed prototypes, Sprints, or implementation.
+Status: **Planned approach.** No completed prototype, Sprint, or production implementation is claimed.
 
-**Project:** Restaurant Service System
+**Project:** DineFlow / Restaurant Service System
 
-**Software Lifecycle Model:** Rapid Prototyping
+**Lifecycle approach:** Iterative prototyping and incremental development within Scrum
 
-**Software Development Methodology:** Scrum
+**Development methodology:** Scrum, with Rapid Prototyping used for validation inside each relevant Sprint
 
-Our project is a Restaurant Service System that allows customers to search for restaurants, book tables, pre-order food, make payments, and call waiters through their smartphones. The system also provides restaurant staff with tools for managing reservations, orders, and table availability. We selected **Rapid Prototyping** as our lifecycle approach and **Scrum** as our development methodology because our project requires flexible development, user feedback, and efficient teamwork.
+**Team:** Three developers and one tester, studying in their third year
 
-## **Software Lifecycle Model – Rapid Prototyping**
+## Why this approach fits DineFlow
 
-Rapid Prototyping involves creating early versions of a system to validate requirements, test functionality, and collect user feedback before full implementation.
+The floor plan, table/time selection, pre-order checkout, and staff call queue need user validation. Booking ownership, payment recovery, and staff permissions remain unresolved. Rapid Prototyping lets the team test those interactions with representative customers, waiters, and managers before implementing integrations.
 
-### **Why Rapid Prototyping?**
+Scrum will organize this work into proposed two-week Sprints. The team will balance scope with university commitments and use each review to collect evidence, not assume stakeholder acceptance. Sprint length and participation arrangements are planned. Product Owner and Scrum Master accountabilities have not yet been assigned; the tester title does not make testing exclusive to one person.
 
-- **Unclear Requirements:** Some requirements are not fully defined, such as reservation modification rules, staff functionality, and integration details. Prototypes help us clarify them before implementation  
--  **User Interface Complexity:** Our system includes an interactive restaurant floor plan, table selection, menus, and ordering interfaces. Prototyping allows us to test their usability and improve the user experience  
-- **Different User Roles:** Customers, waiters, and restaurant managers have different needs. Prototypes allow us to evaluate their workflows and collect feedback from representative users  
-- **Limited Resources:** We have limited time and development resources. Identifying design problems during prototyping is less expensive than rewriting fully implemented functionality  
-- **Early Validation:** We can quickly demonstrate restaurant search, table booking, and pre-ordering without implementing complex payment and POS integrations immediately
+## Planned prototype validation
 
-### **How We Will Apply Rapid Prototyping**
+| Prototype | Validation task | Evidence and decision |
+| --- | --- | --- |
+| Discovery and booking | Ask a customer to find a restaurant and select a table/time; simulate two competing booking requests | Observe task completion and comprehension of conflict messages; review P-BOOK and authority decision D-02 |
+| Pre-order checkout | Select dishes, review the amount, then simulate confirmation, rejection, timeout, cancellation before payment, and abandoned checkout | Verify that no unknown payment is presented as failed or paid; review P-PAY with stakeholders |
+| Staff service queue | Ask a waiter to acknowledge and resolve a call; simulate failed notification delivery and unauthorized access | Validate role scope, call state labels, and escalation policy (P-STAFF, P-CALL) |
 
-1. Identify the main requirements and user scenarios.  
-2. Create interactive prototypes of the customer and staff interfaces.  
-3. Test the prototypes and collect feedback.  
-4. Improve the designs based on the results.  
-5. Use the validated requirements to guide full implementation.
+External payment/POS behavior may be simulated during prototyping. A successful simulation validates a flow hypothesis, not a working provider integration or a quality target.
 
-Rapid Prototyping is especially useful during the requirements and design stages. Since it is not a complete standalone lifecycle model, we plan to follow prototyping with incremental implementation of the production system.
+## Example Sprint Goals
 
-## **Software Development Methodology – Scrum**
+These are candidate goals, not a schedule or completed work.
 
-Scrum is an Agile framework that organizes development into short iterations called Sprints. We selected Scrum because it supports flexible planning, regular feedback, and collaboration within a small team.
+| Candidate Sprint | Goal | Reviewable result and acceptance examples |
+| --- | --- | --- |
+| Booking | Validate table selection and conflict handling | Clickable prototype, UC-02 walkthrough, and concurrent-request test design. Given one table/interval and two requests, at most one succeeds; the other receives a conflict (FR-005, NFR-004). |
+| Pre-order and payment | Validate honest payment status and restaurant delivery | UC-03 prototype with provider/POS simulations. An unanswered provider request stays UNKNOWN; a duplicate success does not create a second payment or order; delivery failure does not erase payment success. |
+| Restaurant service | Validate scoped waiter and manager roles, including one employee holding both | UC-04/UC-05 prototype and permission cases. An unrelated restaurant's staff cannot access its requests; an acknowledgement is distinguishable from resolution. Proposed permissions must be approved before becoming release acceptance criteria. |
 
-### **Why Scrum?**
+Quantitative performance acceptance remains blocked on the targets and workload in D-08. Proposed rules are evaluated as hypotheses until agreed.
 
-- **Small Team:** Our team consists of three developers and one tester. Scrum supports direct communication, shared responsibility, and flexible task distribution without complex management structures  
-- **Limited Professional Experience:** Regular planning, reviews, and retrospectives help us identify problems and improve our workflow  
-- **Changing Requirements:** Restaurant owners, employees, and customers may request changes after reviewing prototypes. Scrum allows us to update priorities between Sprints  
-- **Limited Time:** We need to balance project development with university studies. Short Sprints help us set realistic goals, monitor progress, and prioritize essential features  
--  **Continuous Testing.** Having a dedicated tester allows us to validate features throughout development. Developers also participate in testing, helping us detect defects early.
+## One Sprint and prototype cycle
 
-### **How We Will Apply Scrum**
+**Scrum is the single coordination and planning framework. Rapid Prototyping is the validation technique used inside it.** There is one Product Backlog, one Sprint Goal and one Sprint Backlog per Sprint, not a second prototype planning process. Production work proceeds incrementally in the same framework.
 
-We propose two-week Sprints.
+The proposed Sprint duration remains **two weeks**. A complete focused prototype cycle is planned to fit one Sprint: refine one uncertainty, design/build a reviewable prototype, validate it, and turn evidence into backlog updates. A broader workflow may need several Sprints; a prototype demonstration is not automatic requirements approval.
 
-* Product Backlog: Prioritized features and requirements.  
-* Sprint Planning: Select tasks and define the Sprint Goal.  
-* Daily Scrum: Short meetings to coordinate work and identify obstacles.  
-* Sprint Review: Demonstrate completed functionality and collect feedback.  
-* Sprint Retrospective: Discuss improvements to our development process.
+The schedule below is illustrative for ten working days, not a commitment. Activities overlap; their durations are not intended to sum as independent sequential work.
 
-Scrum will be used during both prototyping and full implementation.
+| Stage | Indicative timing | Responsible participants | Concrete deliverable | Expected outcome |
+| --- | --- | --- | --- | --- |
+| Sprint Planning | Day 1, about 2 hours | Three developers and tester; product representative/accountability assignment TBD | One Sprint Goal, selected linked backlog items, capacity and initial acceptance cases | A feasible reviewable outcome is selected |
+| Requirements refinement | Two 60–90 minute sessions on days 1–2; short follow-ups as needed | Team with available customer/staff representative | Clarified UC, unresolved Q/D-IDs, proposed acceptance criteria | Requirements identification is several focused discussions, not assumed to be one meeting or a completed project-wide phase |
+| Prototype design | Days 2–3, roughly 2 days | Developers; tester reviews failure/permission cases | Flow/screens or executable model for the Sprint Goal | The uncertain user interaction becomes testable |
+| Implementation | Days 4–7, roughly 4 days | Developers with continuous tester input | Prototype code/simulation or a production increment, explicitly labelled | A demonstrable artifact exists; external mocks are disclosed |
+| Validation | Days 7–9, roughly 2 days, overlapping implementation | Tester and developers with representative users where available | Task observations, acceptance results, conflict/failure/abandonment evidence | Identify supported assumptions, defects and open decisions |
+| Sprint Review | Day 10, about 1 hour | Team and available stakeholders | Demonstration against the Goal and acceptance cases | Feedback is recorded; stakeholder decisions are recorded separately if made |
+| Backlog refinement | Day 10, about 1 hour, after review feedback | Team; product ordering/accountability owner TBD | Updated/new Product Backlog Items with links, criteria and dependencies | Evidence changes future work through the same backlog |
+| Retrospective | Day 10, about 45 minutes | Whole team | One or two process improvements for the next Sprint | Adjust collaboration and validation practice |
 
-## **Justification Based on Project Characteristics**
+A proposed short Daily Scrum supports coordination throughout. Product Owner and Scrum Master accountabilities remain unassigned; job titles of three developers and one tester do not resolve those accountabilities. Testing is shared work.
 
-| Criterion | Rapid Prototyping | Scrum |
-| :---- | :---- | :---- |
-| **1\. Product / Project Type** | Our restaurant platform has multiple user interfaces and workflows that should be validated before implementation | Helps manage requirements from customers, waiters, and restaurant managers |
-| **2\. Project Scale** | The system has several modules: reservations, ordering, payments, and recommendations. We can prototype the most important features first | Allows us to divide a medium-complexity project into manageable Sprints |
-| **3\. Team Size** | Four people can create, evaluate, and improve prototypes quickly | Suitable for our small team of three developers and one tester, with direct communication and minimal hierarchy |
-| **4\. Team Competence** | As third-year students, we can validate design decisions before implementing unfamiliar functionality | Regular reviews and collaboration help us develop skills and share knowledge |
-| **5\. Business Factors** | Early validation reduces the risk of spending limited resources on unnecessary features | Lightweight management, flexible priorities, and short iterations fit our academic schedule |
-| **6\. Artifacts Necessity** | Requires prototypes, use cases, feedback records, and validated requirements | Uses Product Backlog, Sprint Backlog, and Increment, supported by architecture documentation and test reports |
-| **7\. Technological Factors** | Allows us to test interface concepts and simulate interactions with payment and POS systems before full integration | Supports planning technical tasks, regular integration, testing, and resolving implementation problems |
+At Sprint end, produce a reviewable prototype or increment appropriate to the Goal, acceptance evidence, updated use-case/requirement clarification, recorded decisions still needed, and a revised backlog. No separate artifact file or backlog system is selected here.
+
+## From prototype evidence to implementation work
+
+"Use validated requirements to guide implementation" means converting an observed behavior into explicit acceptance criteria, then traceable work. It does not mean implementing every suggestion or declaring a policy approved after a demo.
+
+For example, a waiter-call prototype may show that a dual-role employee can handle calls but another restaurant's Manager must not see them:
+
+1. Record the observation and test context against UC-04/UC-05, FR-014, NFR-006 and D-11.
+2. Clarify P-STAFF role-set criteria: WAITER-only, MANAGER-only, both roles in one restaurant, and a different assignment elsewhere. Keep the policy proposed until accepted by the appropriate stakeholder.
+3. Update the existing backlog item or create focused implementation items for scoped authorization, call acknowledgement and denial tests. Each item carries the requirement IDs, observable acceptance conditions, evidence and remaining decision dependencies.
+4. Order those items in the same Product Backlog; select implementable items during a later Sprint Planning when their needed decisions are sufficiently clear.
+5. Re-test the behavior in the increment and demonstrate the evidence at Sprint Review.
+
+If checkout testing reveals an abandoned draft, update UC-03 and P-PAY with a finite proposed expiry rule, add an expiry/reconciliation implementation item and alternative-path tests, and keep the actual deadline as Q-29/D-04 until agreed.
+
+MoSCoW categories remain unchanged. Prototype scope does not redefine the release MVP, and a positive task observation does not establish a performance service level.
+
+## Proposed Definition of Done
+
+For a documentation/prototype item:
+
+- Related requirements, main flow, and failure behavior are traceable.
+- Proposed rules and unresolved decisions are labelled; no stakeholder approval is inferred from a demonstration.
+- A peer has reviewed consistency across prose, use cases, class models, and sequences.
+- UML sources render, SVGs have been visually inspected, and local links resolve.
+- Prototype acceptance cases have results recorded, including conflicts and access failures where relevant.
+
+For a future implementation item, additionally require reviewed code, meaningful behavior/security checks, relevant integration evidence, and verified recovery behavior. Simulated integrations and unagreed performance thresholds must be reported as limitations. This Definition of Done is proposed and has not yet been adopted by the team.
+
+## Deliverables and constraints
+
+The existing documentation provides the requirements baseline, scenario specifications, models, and decision register. Prototypes, feedback, a Product Backlog, Sprint Backlogs, and future test evidence are planned artifacts. No additional technology stack or delivery infrastructure is selected here.
+
+The approach fits a small team, changing requirements, limited experience, and limited time. Focused increments reduce rework across reservations, ordering, payments, and recommendations while preserving a coherent end-to-end design.

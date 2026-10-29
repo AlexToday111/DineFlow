@@ -1,49 +1,68 @@
 @startuml
-title Restaurant Service System - Sequence Diagram
+title DineFlow - Table Reservation
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
 
 autonumber
-
 actor Customer
-
-participant "Customer App" as App
 participant "BookingService" as Booking
-participant "RestaurantTable" as Table
-participant "OrderService" as Order
-participant "Payment" as Payment
-
-Customer -> App : Search restaurants
-App --> Customer : Show restaurants
-
-Customer -> App : Select restaurant and table
-
-App -> Booking : checkAvailability(table, start, end)
-Booking -> Table : isAvailable(start, end)
-Table --> Booking : Availability status
-
-alt Table available
-Booking --> App : Table available
-
-Customer -> App : Confirm booking
-App -> Booking : createBooking(customer, table, start, end)
-Booking --> App : Reservation created
-
-Customer -> App : Select dishes
-App -> Order : createPreOrder(reservation, readyAt)
-Order --> App : Pre-order created
-
-Customer -> App : Confirm payment
-App -> Payment : initiate(amount, paymentMethod)
-
-alt Payment successful
-Payment --> App : Payment confirmed
-App --> Customer : Booking confirmed
-else Payment failed
-Payment --> App : Payment rejected
-App --> Customer : Payment failed
+participant "BookingAuthority\n(logical authority)" as Authority
+participant "POSIntegration" as POS
+note over Booking,Authority
+P-BOOK / P-INTEGRATION: proposed design.
+Start: selected table, interval and guest count.
+Authority may be DineFlow or restaurant-side (D-02).
+end note
+Customer -> Booking : checkAvailability(tableId, start, end, guestCount)
+Booking -> Authority : checkAvailability(tableId, start, end, guestCount)
+Authority --> Booking : preview outcome
+Booking --> Customer : available / unavailable / invalid / source unavailable
+alt Preview available and customer confirms
+ Customer -> Booking : createBooking(customerId, tableId, start, end, guestCount)
+ critical One authoritative conflict decision and creation
+  Booking -> Authority : createIfAvailable(customerId, tableId, start, end, guestCount)
+  note right of Authority
+  Validate interval/capacity and current overlap.
+  A competing booking may have won since preview.
+  No lock/database technology is selected.
+  end note
+  Authority --> Booking : CONFIRMED + reservation / CONFLICT / INVALID / SOURCE_UNAVAILABLE
+ end
+ alt CONFIRMED
+  note over Booking
+  Reservation.status = CONFIRMED
+  deliveryStatus = PENDING
+  Payment is not a prerequisite under P-BOOK.
+  end note
+  Booking -> POS : deliverConfirmed(reservation reference)
+  alt Restaurant acknowledges
+   POS --> Booking : DELIVERED
+   Booking -> Booking : recordDelivery(reference, DELIVERED)
+  else Handoff fails or acknowledgement is unknown
+   POS --> Booking : FAILED
+   Booking -> Booking : recordDelivery(reference, FAILED)
+   note over Booking : Retain CONFIRMED; recovery policy D-06.
+  end
+  Booking --> Customer : confirmed reservation + delivery status
+ else CONFLICT
+  Booking --> Customer : no reservation created; choose another interval/table
+ else INVALID / SOURCE_UNAVAILABLE
+  Booking --> Customer : no reservation created; correct input / service unavailable
+ end
+else Preview unavailable, invalid, or source unavailable
+ note over Customer,Booking : Explain outcome; no booking success is claimed.
 end
-
-else Table unavailable
-Booking --> App : Table unavailable
-App --> Customer : Choose another table
+note over Customer,Booking : End of booking request: confirmed finite reservation or explicit failure.
+opt Later lifecycle: confirmed visit reaches its booked end (P-BOOK)
+ Booking -> Booking : expireReservation(reservationId)
+ note over Booking : EXPIRED; interval no longer blocks the table.
 end
+legend bottom
+FR-004-FR-005, FR-009; NFR-004; AC-001, AC-004-AC-006.
+Atomic exclusion is required. P-BOOK capacity/boundary and confirmation policies are proposed.
+endlegend
 @enduml

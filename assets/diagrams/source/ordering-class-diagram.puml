@@ -1,0 +1,115 @@
+@startuml
+!pragma layout smetana
+title DineFlow - Ordering and Payment
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+
+top to bottom direction
+class Reservation {
+ reservationId: Identifier
+ status: ReservationStatus
+}
+class Restaurant {
+ restaurantId: Identifier
+}
+class Menu {
+ menuId: Identifier
+}
+class MenuItem {
+ itemId: Identifier
+ price: Decimal
+ isAvailable: Boolean
+}
+class PreOrder {
+ orderId: Identifier
+ readyAt: DateTime
+ checkoutDeadline: DateTime
+ quotedAmount: Decimal
+ currency: String
+ status: PreOrderStatus
+ deliveryStatus: DeliveryStatus
+ +addItem(itemId, quantity, unitPrice)
+ +calculateTotal(): Decimal
+}
+class OrderItem {
+ quantity: Integer
+ unitPrice: Decimal
+}
+class Payment {
+ attemptId: Identifier
+ providerReference: String
+ amount: Decimal
+ currency: String
+ status: PaymentStatus
+ +applyVerifiedResult(result)
+ +markUnknown()
+}
+enum PreOrderStatus {
+ DRAFT
+ AWAITING_PAYMENT
+ PAID
+ CANCELLED
+ EXPIRED
+ REVIEW_REQUIRED
+}
+enum PaymentStatus {
+ INITIATED
+ SUCCEEDED
+ FAILED
+ UNKNOWN
+}
+enum DeliveryStatus {
+ PENDING
+ DELIVERED
+ FAILED
+}
+class OrderService <<application service>> {
+ +createPreOrder(reservationId, readyAt)
+ +addItem(orderId, itemId, quantity)
+ +quote(orderId)
+ +markAwaitingPayment(orderId)
+ +acceptPaidOrder(orderId, attemptId): FulfilmentDecision
+ +cancelUnpaid(orderId)
+ +expireUnpaid(orderId)
+ +reviewUnresolved(orderId)
+ +recordDelivery(reference, result)
+}
+class PaymentService <<application service>> {
+ +initiatePayment(orderId)
+ +handleProviderResult(event)
+ +markUnknown(attemptId)
+ +reconcilePayment(attemptId)
+}
+interface PaymentProviderPort {
+ +initiate(attemptId, amount, currency): ProviderResult
+ +verifyResult(event): ProviderResult
+ +queryStatus(attemptId): ProviderResult
+}
+interface POSIntegration {
+ +deliverConfirmed(reference): DeliveryResult
+}
+Reservation "1" -- "0..1" PreOrder : P-PAY
+Restaurant "1" -- "1" Menu : offers
+Menu "1" -- "0..*" MenuItem
+PreOrder "1" *-- "0..*" OrderItem
+OrderItem "0..*" -- "1" MenuItem
+PreOrder "1" -- "0..*" Payment : attempts
+OrderService ..> PreOrder
+OrderService ..> POSIntegration
+PaymentService ..> Payment
+PaymentService ..> PaymentProviderPort
+PaymentService ..> OrderService : verified success
+PreOrder ..> PreOrderStatus
+Payment ..> PaymentStatus
+PreOrder ..> DeliveryStatus
+legend bottom
+P-PAY / P-INTEGRATION: proposed design, FR-006-FR-009; NFR-008; AC-002, AC-005-AC-006.
+No new attempt while unresolved. Closed-order success -> REVIEW_REQUIRED.
+Before initiation, cancel/expiry creates no attempt. Deadlines/refunds remain D-04-D-05.
+Bill payment FR-011 reuses the provider concept; bill model remains D-05, not a pre-order.
+endlegend
+@enduml

@@ -1,64 +1,74 @@
 # DineFlow
 
-A planned restaurant platform for table reservations, food pre-orders, payments, and personalized recommendations.
+A planned restaurant platform that helps customers choose a restaurant, reserve a table, pre-order dishes, request waiter assistance, and pay by phone.
 
-**Project status: Design and documentation.** The repository currently contains project documentation and preliminary UML diagrams. Implementation has not started in this repository.
+**Project status: Design and documentation.** This repository contains a Software Engineering specification and proposed UML models. It does not contain an implemented application or claim completed integrations.
 
 ## Problem
 
-Restaurant customers face long waits, difficulty finding a waiter, slow service, and poor service quality. DineFlow aims to help customers plan visits and access restaurant services through their smartphones.
+Planning a restaurant visit can involve uncertain table availability and waiting. During the visit, customers may struggle to find a waiter or settle the bill promptly. DineFlow connects visit planning with restaurant staff workflows through a smartphone-accessible experience.
 
-## Core platform capabilities
+## Main user roles
 
-- Find restaurants by dishes, price, distance, and other supported parameters.
-- View floor plans, select tables, and reserve a date and time.
-- Browse menus, pre-order dishes, and prepay for a planned visit.
-- Call a waiter and pay the bill by phone inside the restaurant.
-- Support staff in managing reservations, pre-orders, and waiter calls.
-- Provide preference profiles and personalized recommendations, subject to the documented priorities.
+- **Customer:** discover restaurants, book, pre-order, pay, and call a waiter.
+- **Waiter:** receive customer-call notifications; acknowledgement/resolution and relevant pre-order read access are proposed workflow details.
+- **Manager:** proposed owner of restaurant-scoped reservation/pre-order management. One employee may hold both Waiter and Manager roles in a restaurant; each role's permissions remain distinct.
+
+Payment Provider and Restaurant/POS are external collaborators. The [overview](docs/overview.md) defines their boundaries, and the [permission matrix](docs/requirements/functional-requirements.md#proposed-staff-permissions) separates recorded staff scope from proposed role allocation.
+
+## Core platform capabilities and release scope
+
+| Scope | Recorded requirements | Planning interpretation |
+| --- | --- | --- |
+| Candidate MVP / Must Have | Restaurant discovery and filtering; information, floor plans and menus; reservations; pre-orders and prepayment; restaurant handoff; waiter calls; bill payment; staff reservation/pre-order management (FR-001–FR-014) | Baseline release capabilities; detailed acceptance rules still need validation |
+| Later candidates / Should Have | Current occupancy, adaptive menus, activity/history, profiles, recommendations, reservation/pre-order changes (FR-015–FR-021) | Retain their recorded priority; deadlines and detailed rules remain TBD |
+| Optional candidates / Could Have | Average occupancy, dish advice, additional in-restaurant ordering, favorites, feedback (FR-022–FR-026) | Include only when selected for a release |
+| Excluded initially / Won't Have | Customer blacklist management (FR-027) | No initial-release staff permission or workflow |
+
+This is a candidate MVP based on the recorded priorities, not a newly approved release commitment. A prototype may simulate providers or a subset of interactions; that does not remove Must Have requirements from the intended release. Multiple restaurants are required by AC-004. The proposed audience is table-service restaurants; the [P-SCALE pilot envelope](docs/overview.md#target-businesses-and-planning-scale) gives explicit unapproved planning counts and workload. International rollout is not established.
 
 ## Documentation
 
-Start with the project overview, then read the requirements and UML models.
+Read the overview, requirements, use cases, class models, and interaction scenarios in that order.
 
 | Section | Contents | Status |
 | --- | --- | --- |
-| [Project overview](docs/overview.md) | Problem, objectives, and user roles | Documented |
-| [Functional requirements](docs/requirements/functional-requirements.md) | Platform capabilities and MoSCoW priorities | Documented; some details remain open |
-| [Non-functional requirements](docs/requirements/non-functional-requirements.md) | Quality requirements and values to be agreed | Documented; numerical targets are TBD |
-| [Architectural constraints](docs/requirements/architectural-constraints.md) | Integration and platform constraints | Documented |
-| [Use cases](docs/requirements/use-cases.md) | Existing use-case diagram and specification template | Diagram available; textual scenarios pending |
-| [Architecture and UML](docs/architecture/README.md) | Diagram index, class model, and interaction scenario | Lab 6 and Lab 7 sources and images available; design questions remain open |
-| [Open stakeholder questions](docs/requirements/open-questions.md) | Unresolved scope, business rules, and quality targets | Awaiting answers |
-| [Development approach](docs/development/methodology.md) | Rapid Prototyping and Scrum | Planned approach |
+| [Project overview](docs/overview.md) | Problem, roles, workflows, and boundaries | Design context |
+| [Functional requirements](docs/requirements/functional-requirements.md) | FR baseline, acceptance checks, proposed states and permissions | Original IDs/priorities preserved; policies proposed/TBD |
+| [Non-functional requirements](docs/requirements/non-functional-requirements.md) | NFR baseline and measurement/reliability plan | Numerical targets/workload TBD |
+| [Architectural constraints](docs/requirements/architectural-constraints.md) | Mandatory constraints, recommendations, integration boundaries | Technology/authority decisions open |
+| [Use cases](docs/requirements/use-cases.md) | Four role-based diagrams and UC-01–UC-08 specifications | Recorded capabilities with labelled refinements |
+| [Architecture and UML](docs/architecture/README.md) | General/focused class models and four scoped sequences | Proposed design; 12 editable diagrams |
+| [Open stakeholder questions](docs/requirements/open-questions.md) | Decision and proposal register | No new stakeholder approval inferred |
+| [Development approach](docs/development/methodology.md) | Practical Rapid Prototyping/Scrum plan and candidate acceptance/DoD | Planned work |
 
-Requirement IDs (`FR`, `NFR`, and `AC`) provide stable references. The requirement documents define scope and MoSCoW priorities; diagram elements alone do not add approved requirements.
+FR, NFR, and AC identifiers remain stable. The existing requirements are the recorded baseline; diagram detail does not independently create an approved requirement. Proposed policies use P-IDs, and unresolved decisions use D-IDs.
 
 ## Laboratory materials
 
-The [source Google document](https://docs.google.com/document/d/1uYLRcOJxa0YR9Lsh4C2f--5P2zQ14fUCAJ1MeqVXjpA/edit) groups the materials by laboratory work. This repository organizes them by subject.
+The [source Google document](https://docs.google.com/document/d/1uYLRcOJxa0YR9Lsh4C2f--5P2zQ14fUCAJ1MeqVXjpA/edit) groups materials by laboratory work. This repository organizes them by subject; the new views explicitly refine or replace earlier diagrams.
 
 | Source section | Repository location |
 | --- | --- |
 | Topic | [Project overview](docs/overview.md) |
-| Lab 2 — stakeholder questions | [Open questions](docs/requirements/open-questions.md) |
-| Lab 3 — requirements and constraints | [Functional requirements](docs/requirements/functional-requirements.md), [non-functional requirements](docs/requirements/non-functional-requirements.md), and [architectural constraints](docs/requirements/architectural-constraints.md) |
-| Lab 4 — use-case diagram | [Use cases](docs/requirements/use-cases.md) |
+| Lab 2 — stakeholder questions | [Decision register](docs/requirements/open-questions.md) |
+| Lab 3 — requirements and constraints | [Functional](docs/requirements/functional-requirements.md), [non-functional](docs/requirements/non-functional-requirements.md), and [architectural](docs/requirements/architectural-constraints.md) requirements |
+| Lab 4 — use-case diagram | [Overview and Customer/Waiter/Manager views](docs/requirements/use-cases.md) |
 | Lab 5 — lifecycle and methodology | [Development approach](docs/development/methodology.md) |
-| Lab 6 — detailed class diagram | [Class model](docs/architecture/class-diagram.md) with PlantUML source and SVG |
-| Lab 7 — sequence diagram | [Booking, pre-order, and payment scenario](docs/architecture/sequence-diagram.md) with PlantUML source and SVG |
+| Lab 6 — class diagram | [Domain overview and focused class models](docs/architecture/class-diagram.md) |
+| Lab 7 — sequence diagram | [Reservation, pre-order/checkout exit, payment, and waiter-call scenarios](docs/architecture/sequence-diagram.md) |
 
 ## Repository structure
 
 ```text
 docs/
-  overview.md                 Project context and objectives
-  requirements/               Requirements, use cases, and open questions
-  architecture/               UML index and diagram explanations
-  development/                Lifecycle and methodology
+  overview.md                 Project context and boundaries
+  requirements/               Baseline, acceptance checks, use cases, decisions
+  architecture/               UML index, class models, interaction explanations
+  development/                Planned lifecycle and methodology
 assets/
-  diagrams/                   Diagram images
-    source/                   Editable PlantUML sources
+  diagrams/                   Current SVGs and source-linked PNG exports
+    source/                   Editable PlantUML sources and rendering guide
 ```
 
-See the [diagram file guide](assets/diagrams/source/README.md) for naming and update conventions.
+See the [diagram source guide](assets/diagrams/source/README.md) for source/image pairs and rendering commands. Current SVGs replace outdated views. The two existing PNGs are regenerated from maintained sources, so no published diagram is image-only.

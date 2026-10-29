@@ -1,0 +1,30 @@
+@startuml
+title DineFlow - Waiter Use Cases
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+skinparam usecaseBackgroundColor #EAF4FF
+skinparam usecaseBorderColor #3D5368
+
+left to right direction
+actor Waiter
+rectangle "DineFlow - Waiter" {
+ usecase "Receive waiter-call notification\nFR-014; Must" as Receive
+ usecase "Acknowledge a call\nP-CALL; proposed" as Ack #FFF4D6
+ usecase "Resolve a call\nP-CALL; proposed" as Resolve #FFF4D6
+ usecase "View relevant pre-orders\nFR-013; proposed read allocation" as Orders #FFF4D6
+}
+Waiter -- Receive
+Waiter -- Ack
+Waiter -- Resolve
+Waiter -- Orders
+legend bottom
+Blue: FR-014; amber: proposed P-CALL workflow / P-STAFF read allocation.
+Waiter means the WAITER role in the active restaurant membership.
+The same employee may also hold MANAGER; no automatic management rights.
+Receipt, acknowledgement and resolution differ; routing/timing remain D-07-D-11.
+endlegend
+@enduml

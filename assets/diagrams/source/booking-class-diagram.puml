@@ -1,0 +1,78 @@
+@startuml
+!pragma layout smetana
+title DineFlow - Booking and Reservation
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+
+top to bottom direction
+class Customer {
+ userId: Identifier
+}
+class Restaurant {
+ restaurantId: Identifier
+}
+class FloorPlan {
+ planId: Identifier
+}
+class RestaurantTable {
+ tableId: Identifier
+ capacity: Integer
+}
+class Reservation {
+ reservationId: Identifier
+ start: DateTime
+ end: DateTime
+ guestCount: Integer
+ status: ReservationStatus
+ deliveryStatus: DeliveryStatus
+}
+enum ReservationStatus {
+ CONFIRMED
+ CANCELLED
+ EXPIRED
+}
+class BookingService <<application service>> {
+ +checkAvailability(tableId, start, end, guestCount): AvailabilityResult
+ +createBooking(customerId, tableId, start, end, guestCount): BookingResult
+ +changeReservation(reservationId, newStart, newEnd): BookingResult
+ +cancelReservation(reservationId)
+ +expireReservation(reservationId)
+ +recordDelivery(reference, result)
+}
+interface BookingAuthority {
+ +checkAvailability(tableId, start, end, guestCount): AvailabilityResult
+ +createIfAvailable(customerId, tableId, start, end, guestCount): BookingResult
+}
+interface POSIntegration {
+ +deliverConfirmed(reference): DeliveryResult
+}
+Customer "1" -- "0..*" Reservation
+Restaurant "1" -- "1" FloorPlan
+Restaurant "1" -- "1..*" RestaurantTable
+FloorPlan "1" -- "1..*" RestaurantTable : displays
+RestaurantTable "1" -- "0..*" Reservation
+BookingService ..> BookingAuthority : delegates atomic decision
+BookingService ..> Reservation : coordinates
+BookingService ..> POSIntegration : confirmed handoff
+Reservation ..> ReservationStatus
+note right of BookingAuthority
+One coordinated authority across booking channels.
+Implementation and source of truth TBD (D-02).
+Preview does not reserve a table.
+end note
+note bottom of ReservationStatus
+P-BOOK: create CONFIRMED independently of payment.
+P-BOOK: expiry at booked end; cancellation policy TBD.
+P-INTEGRATION: delivery is tracked separately.
+end note
+legend bottom
+Proposed design: P-BOOK, P-INTEGRATION.
+FR-004-FR-005, FR-009, FR-012; NFR-004; AC-001, AC-004-AC-006.
+changeReservation is Should Have FR-020; deadline remains TBD.
+BookingResult includes reservation reference or conflict / invalid / source-unavailable outcome.
+endlegend
+@enduml

@@ -1,37 +1,71 @@
 # Diagram Sources
 
-This directory contains the editable PlantUML sources supplied for Lab 6 and Lab 7. Chat attribution lines were removed; UML logic is preserved.
+Status: **Proposed design.** The sources model the recorded requirements plus explicitly labelled design proposals. They are not executable application functionality.
 
 ## Files
 
-Paths below are relative to the repository root.
+All 12 current SVGs are generated from the matching editable source in this directory. Paths are relative to this guide.
 
-| Diagram | PlantUML source | Rendered image | Documentation |
-| --- | --- | --- | --- |
-| Detailed class model — Lab 6 | [class-diagram.puml](class-diagram.puml) | [class-diagram.svg](../class-diagram.svg) | [Class diagram](../../../docs/architecture/class-diagram.md) |
-| Interaction scenario — Lab 7 | [sequence-diagram.puml](sequence-diagram.puml) | [sequence-diagram.svg](../sequence-diagram.svg) | [Sequence diagram](../../../docs/architecture/sequence-diagram.md) |
+| View | Source | Rendering |
+| --- | --- | --- |
+| General use cases | [use-case-general.puml](use-case-general.puml) | [use-case-general.svg](../use-case-general.svg) |
+| Customer use cases | [use-case-customer.puml](use-case-customer.puml) | [use-case-customer.svg](../use-case-customer.svg) |
+| Waiter use cases | [use-case-waiter.puml](use-case-waiter.puml) | [use-case-waiter.svg](../use-case-waiter.svg) |
+| Manager use cases | [use-case-manager.puml](use-case-manager.puml) | [use-case-manager.svg](../use-case-manager.svg) |
+| General domain | [class-diagram.puml](class-diagram.puml) | [class-diagram.svg](../class-diagram.svg) |
+| Booking/reservation | [booking-class-diagram.puml](booking-class-diagram.puml) | [booking-class-diagram.svg](../booking-class-diagram.svg) |
+| Ordering/payment | [ordering-class-diagram.puml](ordering-class-diagram.puml) | [ordering-class-diagram.svg](../ordering-class-diagram.svg) |
+| Staff/operations | [staff-class-diagram.puml](staff-class-diagram.puml) | [staff-class-diagram.svg](../staff-class-diagram.svg) |
+| Table reservation | [sequence-diagram.puml](sequence-diagram.puml) | [sequence-diagram.svg](../sequence-diagram.svg) |
+| Pre-order creation / checkout exit | [preorder-payment-sequence.puml](preorder-payment-sequence.puml) | [preorder-payment-sequence.svg](../preorder-payment-sequence.svg) |
+| Payment outcomes | [payment-sequence.puml](payment-sequence.puml) | [payment-sequence.svg](../payment-sequence.svg) |
+| Waiter call | [waiter-call-sequence.puml](waiter-call-sequence.puml) | [waiter-call-sequence.svg](../waiter-call-sequence.svg) |
 
-The existing PNG exports in the parent directory remain available for reference. The earlier use-case image has no editable source in this repository.
+Use-case explanations are in [use-cases.md](../../../docs/requirements/use-cases.md); class/interaction explanations and traceability are in the [architecture index](../../../docs/architecture/README.md).
+
+The earlier combined models are explicitly replaced by the current focused views. There are twelve scenarios/views, not separate duplicated PNG models.
+
+The two pre-existing image-only PNG exports are now regenerated from canonical editable sources:
+
+| PNG rendering | Maintained source |
+| --- | --- |
+| [restaurant-service-class-diagram.png](../restaurant-service-class-diagram.png) | [class-diagram.puml](class-diagram.puml) |
+| [restaurant-service-use-case-diagram.png](../restaurant-service-use-case-diagram.png) | [use-case-general.puml](use-case-general.puml) |
+
+These current exports replace the former image-only snapshots. Every published diagram format has a source link; SVG is the primary scalable rendering.
 
 ## Rendering
 
-The SVG files were generated locally with Java 21 and PlantUML 1.2025.2. Smetana provides class layout without a separate Graphviz installation. From the repository root, use a local PlantUML JAR:
+The current SVGs are generated locally using Java 21 and PlantUML 1.2025.2. Class sources explicitly select Smetana layout. Use-case diagrams use the available Graphviz 2.44.1 layout, which correctly attaches actor associations to the use-case boundaries. Sequence layout is handled by PlantUML. From the repository root, set the JAR path to its location on your machine:
 
 ```powershell
-java -jar /path/to/plantuml-1.2025.2.jar -charset UTF-8 -Playout=smetana -tsvg -o .. assets/diagrams/source/class-diagram.puml assets/diagrams/source/sequence-diagram.puml
+$plantUmlJar = 'C:/path/to/plantuml-1.2025.2.jar'
+java -jar $plantUmlJar -charset UTF-8 -checkonly 'assets/diagrams/source/*.puml'
+java -jar $plantUmlJar -charset UTF-8 -tsvg -o .. 'assets/diagrams/source/*.puml'
 ```
 
-Replace the JAR path with its location on your machine. Output goes to `assets/diagrams/`. The PlantUML binary is not stored in this repository.
+Run `java -jar $plantUmlJar -testdot` to check Graphviz availability before rendering use cases. The JAR and Graphviz binary are not stored in the repository. The output directory is relative to each source, so SVGs are written to the existing `assets/diagrams/` directory. No external diagram-hosting service is needed.
+
+To refresh the two PNG formats, render the canonical files into a temporary preview directory and copy the results to the existing PNG filenames:
+
+```powershell
+$diagramPreviewDir = Join-Path $env:TEMP 'dineflow-diagram-preview'
+New-Item -ItemType Directory -Path $diagramPreviewDir -Force | Out-Null
+java -jar $plantUmlJar -charset UTF-8 -tpng -o $diagramPreviewDir assets/diagrams/source/class-diagram.puml assets/diagrams/source/use-case-general.puml
+Copy-Item -LiteralPath (Join-Path $diagramPreviewDir 'class-diagram.png') -Destination assets/diagrams/restaurant-service-class-diagram.png -Force
+Copy-Item -LiteralPath (Join-Path $diagramPreviewDir 'use-case-general.png') -Destination assets/diagrams/restaurant-service-use-case-diagram.png -Force
+```
 
 ## Update workflow
 
-1. Add or edit the corresponding `.puml` source.
-2. Render the source to SVG using PlantUML and save the result under the matching image filename.
-3. Inspect the rendered image for readable labels, complete content, and clear relationships.
-4. Update the diagram page with the image, source link, explanation, and relevant requirement IDs.
-5. Check consistency with requirements and other diagrams. Record unresolved differences in the open questions.
-6. Commit the source, rendered image, and documentation together.
+1. Edit the source and identify affected FR/NFR/AC IDs and P-/D-IDs.
+2. Preserve recorded priorities. Mark new policies as proposals until a decision record establishes approval.
+3. Validate syntax and regenerate the corresponding SVG.
+4. Visually inspect labels, multiplicities, branch conditions, and line crossings at readable zoom.
+5. Review related prose/use cases and other diagrams for consistent names, service operations, permissions, and states.
+6. Check all local document/source/image links and record validation limitations.
+7. Commit source, SVG, and existing documentation changes together when requested.
 
-Do not edit rendered images independently of their sources. If a model replaces an existing diagram, identify the previous version explicitly and update all affected links.
+Use ordinary associations unless lifetime ownership is meaningful; use composition for pre-order-owned items. Use include only for required sub-behavior, not page navigation or diagram hierarchy. Sequence fragments represent conditions/repetition, not approved retry counts. State definitions belong to the [proposed lifecycle model](../../../docs/requirements/functional-requirements.md#proposed-lifecycle-model).
 
 [Back to architecture and UML](../../../docs/architecture/README.md)

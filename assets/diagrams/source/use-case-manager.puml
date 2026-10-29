@@ -1,0 +1,33 @@
+@startuml
+title DineFlow - Manager Use Cases
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+skinparam usecaseBackgroundColor #EAF4FF
+skinparam usecaseBorderColor #3D5368
+
+left to right direction
+actor Manager
+actor "Restaurant/POS" as POS
+rectangle "DineFlow - Manager" {
+ usecase "View / manage reservations\nFR-012; Must staff capability" as Reservations
+ usecase "View / manage incoming pre-orders\nFR-013; Must staff capability" as Orders
+ usecase "Request table-availability change\nP-STAFF; proposed" as Availability #FFF4D6
+ usecase "Request menu-information change\nCandidate only; D-10" as Menu #FFF4D6
+}
+Manager -- Reservations
+Manager -- Orders
+Manager -- Availability
+Manager -- Menu
+POS -- Availability : if authoritative
+POS -- Menu : content ownership TBD
+legend bottom
+Blue: FR-012/FR-013 staff capabilities; Manager allocation is P-STAFF.
+Amber: candidate availability/menu changes, subject to D-02/D-10/D-11.
+One employee may hold both roles; every action remains restaurant-scoped.
+NFR-006 requires authentication/authorization. FR-027 excludes blacklists.
+endlegend
+@enduml

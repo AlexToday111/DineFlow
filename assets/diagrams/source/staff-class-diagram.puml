@@ -1,0 +1,80 @@
+@startuml
+!pragma layout smetana
+title DineFlow - Staff Memberships and Responsibilities
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+hide empty members
+
+top to bottom direction
+class User {
+ userId: Identifier
+ name: String
+}
+class Customer
+class RestaurantStaff {
+ staffId: Identifier
+ roles: Set<StaffRole>
+}
+enum StaffRole {
+ WAITER
+ MANAGER
+}
+class Restaurant {
+ restaurantId: Identifier
+}
+class WaiterCall {
+ callId: Identifier
+ tableId: Identifier
+ status: WaiterCallStatus
+}
+enum WaiterCallStatus {
+ CREATED
+ NOTIFIED
+ ACKNOWLEDGED
+ RESOLVED
+ DELIVERY_FAILED
+}
+class CallService <<application service>> {
+ +createCall(customerId, tableId)
+ +routeCall(callId)
+ +acknowledge(callId, staffId)
+ +resolve(callId, staffId)
+}
+interface StaffNotifier {
+ +notifyStaff(callId, restaurantId): DeliveryResult
+}
+class StaffOperationsService <<application service>> {
+ +viewReservations(staffId, restaurantId)
+ +viewPreOrders(staffId, restaurantId)
+ +manageReservation(staffId, reservationId, action)
+ +managePreOrder(staffId, orderId, action)
+ +requestAvailabilityChange(staffId, tableId, interval)
+ +requestMenuChange(staffId, itemId, change)
+}
+User <|-- Customer
+User "1" -- "0..*" RestaurantStaff : restaurant memberships
+Restaurant "1" -- "0..*" RestaurantStaff : authorizes
+RestaurantStaff ..> StaffRole : assigned role set
+Customer "1" -- "0..*" WaiterCall : creates
+Restaurant "1" -- "0..*" WaiterCall : context
+RestaurantStaff "0..1" -- "0..*" WaiterCall : handler with WAITER role
+CallService ..> RestaurantStaff : checks WAITER + restaurant
+CallService ..> WaiterCall
+CallService ..> StaffNotifier
+StaffOperationsService ..> RestaurantStaff : checks role + restaurant
+WaiterCall ..> WaiterCallStatus
+note bottom of StaffRole
+WAITER: call handling + relevant pre-order read.
+MANAGER: scoped reservation/pre-order management.
+One membership may contain BOTH roles.
+No automatic role inheritance.
+end note
+legend bottom
+P-STAFF / P-CALL proposed; FR-010, FR-012-FR-014; NFR-006; AC-004.
+One person can have different role sets in different restaurants.
+Menu/availability changes remain candidates (D-10-D-11).
+No blacklist management or cross-restaurant permission.
+endlegend
+@enduml

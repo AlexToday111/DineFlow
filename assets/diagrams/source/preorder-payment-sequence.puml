@@ -1,0 +1,55 @@
+@startuml
+title DineFlow - Pre-Order Creation and Checkout Exit
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classAttributeIconSize 0
+hide empty members
+
+autonumber
+actor Customer
+participant "OrderService" as Order
+note over Customer,Order
+Start: customer owns a CONFIRMED reservation (P-PAY).
+No payment attempt exists; the draft creates no extra table hold.
+end note
+Customer -> Order : createPreOrder(reservationId, readyAt)
+Order --> Customer : DRAFT + order reference + proposed checkout deadline
+loop Each selected dish
+ Customer -> Order : addItem(orderId, itemId, quantity)
+ Order --> Customer : item accepted / input or availability error
+end
+Customer -> Order : quote(orderId)
+alt Invalid or empty order / invalid quote
+ Order --> Customer : correct draft; no payment attempt
+else Valid quote
+ Order --> Customer : amount + currency + quote validity
+ alt Customer confirms before deadline
+  ref over Customer,Order
+  Payment initiation and verified outcome
+  See payment-sequence.puml
+  end ref
+ else Customer explicitly cancels before initiation
+  Customer -> Order : cancelUnpaid(orderId)
+  note over Order : PreOrder = CANCELLED; Payment absent.
+  Order --> Customer : pre-order cancelled; reservation unchanged
+ else Customer leaves without confirming
+  note over Customer,Order : No confirmation message; this is not a rejected payment.
+  opt Draft still unpaid at proposed finite deadline
+   Order -> Order : expireUnpaid(orderId)
+   note over Order : PreOrder = EXPIRED; Payment absent.
+  end
+ end
+end
+note over Customer,Order
+End: DRAFT correction, payment subprocess, CANCELLED, or EXPIRED.
+Reservation stays CONFIRMED until separate cancellation / booked end.
+Cancellation and initiation check state as one logical decision:
+if initiation already won, reconcile instead of claiming no charge exists.
+Deadline trigger/duration remain D-04; no scheduler is selected.
+end note
+legend bottom
+P-PAY proposed; FR-007-FR-008. Valid quote is an input to the separate payment scenario.
+An abandoned draft is finite. It never creates an indefinite table hold.
+endlegend
+@enduml
