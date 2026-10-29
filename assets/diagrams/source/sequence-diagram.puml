@@ -1,0 +1,49 @@
+@startuml
+title Restaurant Service System - Sequence Diagram
+
+autonumber
+
+actor Customer
+
+participant "Customer App" as App
+participant "BookingService" as Booking
+participant "RestaurantTable" as Table
+participant "OrderService" as Order
+participant "Payment" as Payment
+
+Customer -> App : Search restaurants
+App --> Customer : Show restaurants
+
+Customer -> App : Select restaurant and table
+
+App -> Booking : checkAvailability(table, start, end)
+Booking -> Table : isAvailable(start, end)
+Table --> Booking : Availability status
+
+alt Table available
+Booking --> App : Table available
+
+Customer -> App : Confirm booking
+App -> Booking : createBooking(customer, table, start, end)
+Booking --> App : Reservation created
+
+Customer -> App : Select dishes
+App -> Order : createPreOrder(reservation, readyAt)
+Order --> App : Pre-order created
+
+Customer -> App : Confirm payment
+App -> Payment : initiate(amount, paymentMethod)
+
+alt Payment successful
+Payment --> App : Payment confirmed
+App --> Customer : Booking confirmed
+else Payment failed
+Payment --> App : Payment rejected
+App --> Customer : Payment failed
+end
+
+else Table unavailable
+Booking --> App : Table unavailable
+App --> Customer : Choose another table
+end
+@enduml

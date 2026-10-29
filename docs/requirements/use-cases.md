@@ -24,6 +24,6 @@ The image is preserved without modification. Its presence does not confirm detai
 
 ## Related UML models
 
-The [class diagram](../architecture/class-diagram.md) describes the system structure. The planned [sequence diagram](../architecture/sequence-diagram.md) will illustrate interactions during booking, pre-ordering, and payment once its UML source is added.
+The [class diagram](../architecture/class-diagram.md) describes the system structure. The [sequence diagram](../architecture/sequence-diagram.md) illustrates interactions during booking, pre-ordering, and payment. Both include editable PlantUML sources and rendered SVG images.
 
 [Back to architecture and UML](../architecture/README.md)

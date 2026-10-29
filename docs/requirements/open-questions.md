@@ -29,6 +29,20 @@ Status: **Unanswered**. These questions are preserved from the source; no stakeh
 3. Should customers be able to book and pay at any time of day?
 4. How quickly should a waiter receive a customer's call notification after the customer presses the button?
 
+## UML model review
+
+The supplied Lab 6 and Lab 7 models raise the following design questions. The diagrams retain their supplied logic while these questions remain unresolved.
+
+1. What operations should the `POSIntegration` interface expose? It is currently referenced without an explicit interface declaration.
+2. Are loyalty points, discounts, tax calculations, and reservation cancellation in scope? What requirements and business rules govern them?
+3. How does booking creation atomically verify or hold availability to prevent concurrent double bookings (NFR-004)?
+4. What happens to a created reservation and pre-order after a failed, abandoned, or timed-out payment? Can the customer retry, and when is the table released?
+5. Where are selected dishes added to the pre-order, and how is the payment amount calculated?
+6. When are reservations and pre-orders sent to the restaurant/POS, and how are integration failures handled (FR-009, AC-005)?
+7. How will the design enforce authorization, restaurant data isolation, and external payment-provider delegation (NFR-006, AC-002, AC-004)?
+
+See the [class diagram review](../architecture/class-diagram.md#review-notes) and [sequence diagram review](../architecture/sequence-diagram.md#review-notes) for context.
+
 ## Source ambiguities and overlaps
 
 - The narrative describes several capabilities without priorities. The explicit requirement lists assign current occupancy, profiles, and recommendations to Should Have; average occupancy and dish advice to Could Have. Those listed priorities are retained.

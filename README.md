@@ -28,7 +28,7 @@ Start with the project overview, then read the requirements and UML models.
 | [Non-functional requirements](docs/requirements/non-functional-requirements.md) | Quality requirements and values to be agreed | Documented; numerical targets are TBD |
 | [Architectural constraints](docs/requirements/architectural-constraints.md) | Integration and platform constraints | Documented |
 | [Use cases](docs/requirements/use-cases.md) | Existing use-case diagram and specification template | Diagram available; textual scenarios pending |
-| [Architecture and UML](docs/architecture/README.md) | Diagram index, class model, and interaction scenario | Preliminary model available; new UML sources pending |
+| [Architecture and UML](docs/architecture/README.md) | Diagram index, class model, and interaction scenario | Lab 6 and Lab 7 sources and images available; design questions remain open |
 | [Open stakeholder questions](docs/requirements/open-questions.md) | Unresolved scope, business rules, and quality targets | Awaiting answers |
 | [Development approach](docs/development/methodology.md) | Rapid Prototyping and Scrum | Planned approach |
 
@@ -45,8 +45,8 @@ The [source Google document](https://docs.google.com/document/d/1uYLRcOJxa0YR9Ls
 | Lab 3 — requirements and constraints | [Functional requirements](docs/requirements/functional-requirements.md), [non-functional requirements](docs/requirements/non-functional-requirements.md), and [architectural constraints](docs/requirements/architectural-constraints.md) |
 | Lab 4 — use-case diagram | [Use cases](docs/requirements/use-cases.md) |
 | Lab 5 — lifecycle and methodology | [Development approach](docs/development/methodology.md) |
-| Lab 6 — detailed class diagram | [Class model](docs/architecture/class-diagram.md); new source and image pending |
-| Lab 7 — sequence diagram | [Booking, pre-order, and payment scenario](docs/architecture/sequence-diagram.md); source and image pending |
+| Lab 6 — detailed class diagram | [Class model](docs/architecture/class-diagram.md) with PlantUML source and SVG |
+| Lab 7 — sequence diagram | [Booking, pre-order, and payment scenario](docs/architecture/sequence-diagram.md) with PlantUML source and SVG |
 
 ## Repository structure
 
@@ -58,7 +58,7 @@ docs/
   development/                Lifecycle and methodology
 assets/
   diagrams/                   Diagram images
-    source/                   Editable PlantUML sources (pending)
+    source/                   Editable PlantUML sources
 ```
 
 See the [diagram file guide](assets/diagrams/source/README.md) for naming and update conventions.

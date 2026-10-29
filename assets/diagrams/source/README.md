@@ -1,17 +1,27 @@
 # Diagram Sources
 
-This directory is prepared for editable PlantUML sources. The new UML code has not yet been added.
+This directory contains the editable PlantUML sources supplied for Lab 6 and Lab 7. Chat attribution lines were removed; UML logic is preserved.
 
-## Planned files
+## Files
 
 Paths below are relative to the repository root.
 
 | Diagram | PlantUML source | Rendered image | Documentation |
 | --- | --- | --- | --- |
-| Detailed class model — Lab 6 | `assets/diagrams/source/class-diagram.puml` | `assets/diagrams/class-diagram.svg` | [Class diagram](../../../docs/architecture/class-diagram.md) |
-| Interaction scenario — Lab 7 | `assets/diagrams/source/sequence-diagram.puml` | `assets/diagrams/sequence-diagram.svg` | [Sequence diagram](../../../docs/architecture/sequence-diagram.md) |
+| Detailed class model — Lab 6 | [class-diagram.puml](class-diagram.puml) | [class-diagram.svg](../class-diagram.svg) | [Class diagram](../../../docs/architecture/class-diagram.md) |
+| Interaction scenario — Lab 7 | [sequence-diagram.puml](sequence-diagram.puml) | [sequence-diagram.svg](../sequence-diagram.svg) | [Sequence diagram](../../../docs/architecture/sequence-diagram.md) |
 
-The existing PNG diagrams in the parent directory remain available. Their editable sources are not currently present in this repository.
+The existing PNG exports in the parent directory remain available for reference. The earlier use-case image has no editable source in this repository.
+
+## Rendering
+
+The SVG files were generated locally with Java 21 and PlantUML 1.2025.2. Smetana provides class layout without a separate Graphviz installation. From the repository root, use a local PlantUML JAR:
+
+```powershell
+java -jar /path/to/plantuml-1.2025.2.jar -charset UTF-8 -Playout=smetana -tsvg -o .. assets/diagrams/source/class-diagram.puml assets/diagrams/source/sequence-diagram.puml
+```
+
+Replace the JAR path with its location on your machine. Output goes to `assets/diagrams/`. The PlantUML binary is not stored in this repository.
 
 ## Update workflow
 

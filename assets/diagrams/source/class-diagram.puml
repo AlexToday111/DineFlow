@@ -1,0 +1,210 @@
+@startuml
+' Restaurant Service System — Lab Week 6
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+package "Users & Staff" {
+abstract class User {
+-userId: UUID
+-name: String
+-email: String
+#phone: String
++login(in email: String, in password: String): Boolean
++updateProfile(in name: String, in phone: String): void
+}
+class Customer {
+-loyaltyPoints: int
++searchRestaurants(in query: String): List<Restaurant>
++requestReservation(in table: RestaurantTable, in start: DateTime, in end: DateTime): Reservation
+}
+abstract class RestaurantStaff {
+-employeeId: UUID
+#role: String
++viewReservations(in date: Date): List<Reservation>
++updateAvailability(in table: RestaurantTable, in available: Boolean): void
+}
+class Waiter {
+-assignedSection: String
++acceptCall(in callId: UUID): void
++markCallResolved(in callId: UUID): void
+}
+class Manager {
+-accessLevel: int
++confirmReservation(in reservationId: UUID): Boolean
++updateMenuPrice(in itemId: UUID, in newPrice: Decimal): void
+}
+}
+
+package "Restaurant & Menu" {
+class Restaurant {
+-restaurantId: UUID
+-name: String
+-address: String
+-priceCategory: int
++getInformation(in restaurantId: UUID): String
++calculateOccupancy(in at: DateTime): double
+}
+class FloorPlan {
+-planId: UUID
+-version: int
++getAvailableTables(in start: DateTime, in end: DateTime): List<RestaurantTable>
++renderPlan(in scale: double): String
+}
+class RestaurantTable {
+-tableId: UUID
+-tableNumber: int
+-capacity: int
+-status: String
++isAvailable(in start: DateTime, in end: DateTime): Boolean
++setStatus(in status: String): void
+}
+class Menu {
+-menuId: UUID
+-lastUpdated: DateTime
++listItems(in category: String): List<MenuItem>
++getMediaQuality(in connectionSpeedMbps: double): String
+}
+class MenuItem {
+-itemId: UUID
+-name: String
+-price: Decimal
+-category: String
+-isAvailable: Boolean
++updatePrice(in price: Decimal): void
++checkAvailability(in quantity: int): Boolean
+}
+}
+
+package "Reservations & Ordering" {
+class Reservation {
+-reservationId: UUID
+-startTime: DateTime
+-endTime: DateTime
+-guestCount: int
+-status: String
++confirm(in confirmedAt: DateTime): void
++reschedule(in newStart: DateTime, in newEnd: DateTime): Boolean
++cancel(in reason: String): void
+}
+class PreOrder {
+-orderId: UUID
+-readyAt: DateTime
+-status: String
++addItem(in dish: MenuItem, in quantity: int): void
++calculateTotal(in discountRate: double): Decimal
++submit(in requestedReadyAt: DateTime): Boolean
+}
+class OrderItem {
+-quantity: int
+-unitPrice: Decimal
+-specialInstructions: String
++setQuantity(in quantity: int): void
++getSubtotal(in taxRate: double): Decimal
+}
+class Payment {
+-paymentId: UUID
+-amount: Decimal
+-status: String
+-providerReference: String
++initiate(in amount: Decimal, in paymentMethod: String): Boolean
++updateStatus(in status: String): void
+}
+class WaiterCall {
+-callId: UUID
+-createdAt: DateTime
+-status: String
++send(in message: String): void
++resolve(in resolvedAt: DateTime): void
+}
+class BookingService {
+-changeDeadlineMinutes: int
++checkAvailability(in table: RestaurantTable, in start: DateTime, in end: DateTime): Boolean
++createBooking(in customer: Customer, in table: RestaurantTable, in start: DateTime, in end: DateTime): Reservation
++getAvailabilityReport(in restaurantId: UUID, out availableCount: int): void
+}
+class OrderService {
+-defaultTaxRate: double
++createPreOrder(in reservation: Reservation, in readyAt: DateTime): PreOrder
++applyDiscount(inout total: Decimal, in discountRate: double): void
++sendToPOS(in order: PreOrder): Boolean
+}
+}
+
+package "Personalization" {
+class PreferenceProfile {
+-profileId: UUID
+-preferredCuisine: String
+-pricePreference: int
++updatePreferences(in cuisine: String, in maxPrice: Decimal): void
++getFavoriteDishes(in limit: int): List<MenuItem>
+}
+class ActivityLog {
+-logId: UUID
+-actionType: String
+-timestamp: DateTime
++recordAction(in action: String, in occurredAt: DateTime): void
++getDetails(in includeMetadata: Boolean): String
+}
+class Recommendation {
+-recommendationId: UUID
+-score: double
+-createdAt: DateTime
++generateFor(in profile: PreferenceProfile, in limit: int): List<Restaurant>
++recalculateScore(in recentActivityWeight: double): double
+}
+}
+
+' Inheritance
+User <|-- Customer
+User <|-- RestaurantStaff
+RestaurantStaff <|-- Waiter
+RestaurantStaff <|-- Manager
+
+' Composition (strong ownership)
+Restaurant "1" *-- "1" FloorPlan : contains
+PreOrder "1" *-- "1..*" OrderItem : consists of
+Customer "1" *-- "0..1" PreferenceProfile : owns
+
+' Aggregation (independent lifetimes)
+Restaurant "1" o-- "0..*" RestaurantStaff : employs
+Menu "1" o-- "0..*" MenuItem : lists
+
+' Associations: multiplicities on BOTH ends
+Restaurant "1" -- "1" Menu : offers
+Restaurant "1" -- "1..*" RestaurantTable : has
+FloorPlan "1" -- "1..*" RestaurantTable : displays
+Customer "1" -- "0..*" Reservation : makes
+RestaurantTable "1" -- "0..*" Reservation : assigned to
+Restaurant "1" -- "0..*" Reservation : receives
+Reservation "1" -- "0..1" PreOrder : includes
+OrderItem "0..*" -- "1" MenuItem : refers to
+PreOrder "1" -- "0..*" Payment : paid by
+Customer "1" -- "0..*" WaiterCall : creates
+RestaurantTable "1" -- "0..*" WaiterCall : requests at
+Waiter "0..1" -- "0..*" WaiterCall : handles
+Customer "1" -- "0..*" ActivityLog : generates
+PreferenceProfile "1" -- "0..*" Recommendation : produces
+
+' Realization: services implement interface contracts
+OrderService ..|> POSIntegration : implements
+
+' Dependencies: temporary use of another class
+BookingService ..> Reservation : creates / checks
+BookingService ..> RestaurantTable : checks availability
+OrderService ..> PreOrder : creates / submits
+Recommendation ..> ActivityLog : analyzes
+
+note bottom of BookingService
+Parameter directionality example:
+getAvailabilityReport(in restaurantId,
+out availableCount)
+end note
+note bottom of OrderService
+Parameter directionality example:
+applyDiscount(inout total, in discountRate)
+end note
+@enduml
